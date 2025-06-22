@@ -1,9 +1,11 @@
 const Header = () => {
   return (
     <div>
-      <header className="bg-red-500 text-white p-4 flex flex-row justify-between w-full">
+      <header className="bg-gray-800 pt-6 text-white p-4 flex flex-row justify-between w-full border-l-2 border-gray-500">
         <h1>Platform Launch</h1>
-        <button>Add Task</button>
+        <button className="bg-purple-600 mr-6 py-2 px-5 rounded-2xl">
+          Add New Task
+        </button>
       </header>
     </div>
   );

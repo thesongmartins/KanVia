@@ -27,7 +27,7 @@ const SideBarItems: SideBarButtonProps[] = [
 
 const SideBarButton = ({ icon, label }: SideBarButtonProps) => {
   return (
-    <button className="flex items-center gap-2 p-2 hover:bg-gray-700 rounded">
+    <button className="flex w-full items-center gap-2 p-2 hover:bg-gray-700 rounded">
       {icon}
       <span>{label}</span>
     </button>
@@ -36,9 +36,9 @@ const SideBarButton = ({ icon, label }: SideBarButtonProps) => {
 
 const SideBar = () => {
   return (
-    <div className="flex h-screen ">
-      <div className=" w-64 bg-gray-800 text-white p-4">
-        <h2>Task Management</h2>
+    <div className="flex  ">
+      <div className="h-screen w-64 bg-gray-800 text-white p-4">
+        <h2 className="pb-8 pt-2 text-2xl">KanVia</h2>
         <nav>
           <ul>
             {SideBarItems.map((item, index) => (
