@@ -1,23 +1,20 @@
-import { Plus, Rocket } from "lucide-react";
-import Header from "./Header";
+import { Plus } from "lucide-react";
+import "../../../public/logo-dark.svg";
 
 interface SideBarButtonProps {
   label: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
 }
 
 const SideBarItems: SideBarButtonProps[] = [
   {
     label: "Marketing",
-    icon: <Rocket className="w-6 h-6" />,
   },
   {
     label: "Sales",
-    icon: <Rocket className="w-6 h-6" />,
   },
   {
     label: "Development",
-    icon: <Rocket className="w-6 h-6" />,
   },
   {
     label: "Create New Board",
@@ -27,7 +24,7 @@ const SideBarItems: SideBarButtonProps[] = [
 
 const SideBarButton = ({ icon, label }: SideBarButtonProps) => {
   return (
-    <button className="flex w-full items-center gap-2 p-2 hover:bg-gray-700 rounded">
+    <button className="flex w-full items-center gap-2 p-2 hover:bg-[#20212c]/50 rounded">
       {icon}
       <span>{label}</span>
     </button>
@@ -37,8 +34,11 @@ const SideBarButton = ({ icon, label }: SideBarButtonProps) => {
 const SideBar = () => {
   return (
     <div className="flex  ">
-      <div className="h-screen w-64 bg-gray-800 text-white p-4">
-        <h2 className="pb-8 pt-2 text-2xl">KanVia</h2>
+      <div className="h-screen w-64 bg-[#2B2C37] text-white p-4">
+        <h2 className="pb-8 pt-2 text-2xl">
+          {" "}
+          <img src="/logo-light.svg" alt="logo-image" />
+        </h2>
         <nav>
           <ul>
             {SideBarItems.map((item, index) => (
@@ -48,10 +48,6 @@ const SideBar = () => {
             ))}
           </ul>
         </nav>
-      </div>
-      <div className="flex-1 ">
-        {" "}
-        <Header />
       </div>
     </div>
   );

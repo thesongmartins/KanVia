@@ -1,10 +1,10 @@
-import SideBar from "./components/SideBar";
+import Layout from "./components/layout/layout";
 import "./index.css";
 
 const App = () => {
   return (
     <div>
-      <SideBar />
+      <Layout children />
     </div>
   );
 };
