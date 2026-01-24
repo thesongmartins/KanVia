@@ -1,10 +1,11 @@
 import { Plus } from "lucide-react";
 import "../../../public/logo-dark.svg";
+import type { SideBarButtonProps } from "../../types/sidebarprops";
 
-interface SideBarButtonProps {
-  label: string;
-  icon?: React.ReactNode;
-}
+// interface SideBarButtonProps {
+//   label: string;
+//   icon?: React.ReactNode;
+// }
 
 const SideBarItems: SideBarButtonProps[] = [
   {
@@ -17,14 +18,14 @@ const SideBarItems: SideBarButtonProps[] = [
     label: "Development",
   },
   {
-    label: "Create New Board",
+    label: " + Create New Board",
     icon: <Plus className="w-6 h-6" />,
   },
 ];
 
 const SideBarButton = ({ icon, label }: SideBarButtonProps) => {
   return (
-    <button className="flex w-full items-center gap-2 p-2 hover:bg-[#20212c]/50 rounded">
+    <button className="flex w-full font-bold text-[#635fc7] items-center gap-2 p-2 hover:bg-[#20212c]rounded">
       {icon}
       <span>{label}</span>
     </button>
