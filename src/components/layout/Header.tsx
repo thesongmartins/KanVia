@@ -11,10 +11,10 @@ interface HeaderProps {
 
 const Header = ({ activeBoard, onAddNewTask, onEditBoard, onDeleteBoard }: HeaderProps) => {
   return (
-    <header className="bg-[var(--color-bg-surface)] p-6 flex flex-row items-center justify-between w-full border-b border-[var(--color-border)] transition-colors duration-200">
+    <header className="bg-(--color-bg-surface) p-6 flex flex-row items-center justify-between w-full border-b border-(--color-border) transition-colors duration-200">
       <div className="flex items-center gap-4">
         {/* Mobile Logo could go here if needed */}
-        <h1 className="text-xl md:text-2xl font-bold text-[var(--color-text-primary)] max-w-[200px] md:max-w-none truncate transition-colors duration-200">
+        <h1 className="text-xl md:text-2xl font-bold text-(--color-text-primary) max-w-[200px] md:max-w-none truncate transition-colors duration-200">
           {activeBoard.name}
         </h1>
       </div>
