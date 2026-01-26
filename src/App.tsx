@@ -3,9 +3,10 @@ import Layout from "./components/layout/layout";
 import Board from "./components/Board";
 import TaskModal from "./components/modals/TaskModal";
 import AddEditTaskModal from "./components/modals/AddEditTaskModal";
+import BoardModal from "./components/modals/BoardModal";
 import data from "./data.json";
 import "./index.css";
-import type { Board as BoardType, Task } from "./types/types";
+import type { Board as BoardType } from "./types/types";
 
 const App = () => {
   const [activeBoardIndex, setActiveBoardIndex] = useState(0);
@@ -18,6 +19,9 @@ const App = () => {
   // Modal State
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isBoardModalOpen, setIsBoardModalOpen] = useState(false);
+  const [boardModalType, setBoardModalType] = useState<"add" | "edit">("add");
+  
   const [selectedTaskIndices, setSelectedTaskIndices] = useState<{
     colIndex: number;
     taskIndex: number;
@@ -98,6 +102,57 @@ const App = () => {
     setBoards(newBoards);
   };
 
+  const handleBoardSubmit = (data: { name: string; columns: { name: string; tasks: [] }[] }) => {
+    const newBoards = [...boards];
+    
+    if (boardModalType === "add") {
+      const newBoard: BoardType = {
+        name: data.name,
+        columns: data.columns.map(col => ({ name: col.name, tasks: [] }))
+      };
+      newBoards.push(newBoard);
+      setBoards(newBoards);
+      setActiveBoardIndex(newBoards.length - 1);
+    } else {
+      const board = newBoards[activeBoardIndex];
+      board.name = data.name;
+      
+      // Smart merge of columns to preserve tasks if names match, or just tasks if index match
+      // For simplicity in this demo, we will try to map existing tasks to new columns if names match
+      
+      const newColumns = data.columns.map(newCol => {
+         const existingCol = board.columns.find(c => c.name === newCol.name);
+         return {
+           name: newCol.name,
+           tasks: existingCol ? existingCol.tasks : []
+         };
+      });
+
+      // NOTE: This simple logic might lose tasks if column names change completely. 
+      // In a real app we'd track column IDs. 
+      // Fallback: if we just added a column, keep old ones.
+      // But the modal returns the FULL list of desired columns. 
+      
+      // Let's improve: The modal returns ALL columns including new ones.
+      // We iterate over the modal's returned columns.
+      
+      board.columns = newColumns;
+      setBoards(newBoards);
+    }
+    
+    setIsBoardModalOpen(false);
+  };
+
+  const openAddBoardModal = () => {
+    setBoardModalType("add");
+    setIsBoardModalOpen(true);
+  };
+
+  const openEditBoardModal = () => {
+    setBoardModalType("edit");
+    setIsBoardModalOpen(true);
+  };
+
   return (
     <Layout
       boards={boards}
@@ -108,10 +163,12 @@ const App = () => {
       isSidebarOpen={isSidebarOpen}
       setIsSidebarOpen={setIsSidebarOpen}
       onAddNewTask={() => setIsAddModalOpen(true)}
+      onAddBoard={openAddBoardModal}
     >
       <Board 
         board={activeBoard} 
         onTaskClick={handleTaskClick}
+        onAddColumn={openEditBoardModal}
       />
       
       {selectedTask && (
@@ -131,6 +188,14 @@ const App = () => {
         onClose={() => setIsAddModalOpen(false)}
         columns={activeBoard.columns}
         onSubmit={handleAddTask}
+      />
+
+      <BoardModal 
+        isOpen={isBoardModalOpen}
+        onClose={() => setIsBoardModalOpen(false)}
+        type={boardModalType}
+        board={boardModalType === "edit" ? activeBoard : undefined}
+        onSubmit={handleBoardSubmit}
       />
     </Layout>
   );

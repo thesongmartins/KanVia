@@ -1,7 +1,6 @@
 import { EllipsisVertical } from "lucide-react";
 import type { Task, Column } from "../../types/types";
 import Modal from "./Modal";
-import { useState } from "react";
 
 interface TaskModalProps {
   isOpen: boolean;

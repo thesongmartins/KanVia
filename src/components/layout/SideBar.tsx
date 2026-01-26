@@ -8,6 +8,7 @@ interface SideBarProps {
   theme: "light" | "dark";
   setTheme: (theme: "light" | "dark") => void;
   setIsSidebarOpen: (isOpen: boolean) => void;
+  onAddBoard: () => void;
 }
 
 const SideBar = ({
@@ -17,6 +18,7 @@ const SideBar = ({
   theme,
   setTheme,
   setIsSidebarOpen,
+  onAddBoard,
 }: SideBarProps) => {
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
@@ -54,7 +56,10 @@ const SideBar = ({
               </li>
             ))}
             <li>
-              <button className="flex items-center gap-4 px-8 py-4 text-[#635FC7] font-bold hover:text-[#A8A4FF] w-full text-left">
+              <button 
+                onClick={onAddBoard}
+                className="flex items-center gap-4 px-8 py-4 text-[#635FC7] font-bold hover:text-[#A8A4FF] w-full text-left"
+              >
                 <LayoutIcon className="w-5 h-5" />
                 <span>+ Create New Board</span>
               </button>
