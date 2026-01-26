@@ -63,19 +63,19 @@ const BoardModal = ({ isOpen, onClose, type, board, onSubmit }: BoardModalProps)
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <label className="text-[#828FA3] text-xs font-bold dark:text-white">Board Name</label>
+          <label className="text-(--color-text-secondary) text-xs font-bold">Board Name</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Web Design"
-            className="border border-[#828FA3]/25 rounded px-4 py-2 text-sm text-[#000112] dark:text-white bg-transparent outline-none focus:border-[#635FC7]"
+            className="border border-(--color-input-border) rounded px-4 py-2 text-sm text-(--color-text-primary) bg-transparent outline-none focus:border-[#635FC7] placeholder-[#828FA3]/50 transition-colors"
             required
           />
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-[#828FA3] text-xs font-bold dark:text-white">Board Columns</label>
+          <label className="text-(--color-text-secondary) text-xs font-bold">Board Columns</label>
           {columns.map((col, index) => (
             <div key={index} className="flex items-center gap-4">
               <input
@@ -83,12 +83,12 @@ const BoardModal = ({ isOpen, onClose, type, board, onSubmit }: BoardModalProps)
                 value={col.name}
                 onChange={(e) => updateColumn(index, e.target.value)}
                 placeholder="e.g. Todo"
-                className="flex-1 border border-[#828FA3]/25 rounded px-4 py-2 text-sm text-[#000112] dark:text-white bg-transparent outline-none focus:border-[#635FC7]"
+                className="flex-1 border border-(--color-input-border) rounded px-4 py-2 text-sm text-(--color-text-primary) bg-transparent outline-none focus:border-[#635FC7] placeholder-[#828FA3]/50 transition-colors"
               />
               <button
                 type="button"
                 onClick={() => removeColumn(index)}
-                className="text-[#828FA3] hover:text-red-500"
+                className="text-(--color-text-secondary) hover:text-red-500"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -97,7 +97,7 @@ const BoardModal = ({ isOpen, onClose, type, board, onSubmit }: BoardModalProps)
           <button
             type="button"
             onClick={addColumn}
-            className="bg-[#F4F7FD] dark:bg-white text-[#635FC7] font-bold py-2 rounded-full hover:bg-[#D8D7F1] transition-colors mt-2"
+            className="bg-(--color-bg-main) text-[#635FC7] font-bold py-2 rounded-full hover:bg-[#D8D7F1] transition-colors mt-2"
           >
             + Add New Column
           </button>

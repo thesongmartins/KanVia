@@ -25,7 +25,7 @@ const SideBar = ({
   };
 
   return (
-    <div className="hidden md:flex flex-col w-[300px] h-screen bg-white dark:bg-[#2B2C37] border-r border-[#E4EBFA] dark:border-[#3E3F4E] transition-colors duration-200">
+    <div className="hidden md:flex flex-col w-[300px] h-screen bg-(--color-bg-surface) border-r border-(--color-border) transition-colors duration-200">
       <div className="p-8">
         {theme === "dark" ? (
           <img src="/logo-light.svg" alt="kanban" />
@@ -35,19 +35,19 @@ const SideBar = ({
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <h3 className="px-8 pb-4 text-xs font-bold tracking-widest text-[#828FA3] uppercase">
+        <h3 className="px-8 pb-4 text-xs font-bold tracking-widest text-(--color-text-secondary) uppercase">
           All Boards ({boards.length})
         </h3>
         <nav>
           <ul>
             {boards.map((board, index) => (
-              <li key={index}>
+              <li  key={index}>
                 <button
                   onClick={() => setActiveBoardIndex(index)}
                   className={`flex items-center gap-4 w-[90%] px-8 py-4 rounded-r-full transition-colors font-bold ${
                     index === activeBoardIndex
                       ? "bg-[#635FC7] text-white"
-                      : "text-[#828FA3] hover:text-[#635FC7] hover:bg-[#F0EFFA] dark:hover:bg-white"
+                      : "text-(--color-text-secondary) hover:text-[#635FC7] hover:bg-[#F0EFFA] dark:hover:bg-white"
                   }`}
                 >
                   <LayoutIcon className="w-5 h-5" />
@@ -69,10 +69,10 @@ const SideBar = ({
       </div>
 
       <div className="p-6">
-        <div className="flex items-center justify-center gap-6 bg-[#F4F7FD] dark:bg-[#20212C] p-3 rounded-md mb-4 transition-colors duration-200">
+        <div className="flex items-center justify-center gap-6 bg-(--color-bg-main) p-3 rounded-md mb-4 transition-colors duration-200">
           <Sun
             className={`w-5 h-5 ${
-              theme === "light" ? "text-yellow-500" : "text-[#828FA3]"
+              theme === "light" ? "text-yellow-500" : "text-(--color-text-secondary)"
             }`}
           />
           <div
@@ -89,14 +89,14 @@ const SideBar = ({
           </div>
           <Moon
             className={`w-5 h-5 ${
-              theme === "dark" ? "text-white" : "text-[#828FA3]"
+              theme === "dark" ? "text-white" : "text-(--color-text-secondary)"
             }`}
           />
         </div>
 
         <button
           onClick={() => setIsSidebarOpen(false)}
-          className="flex items-center gap-2 text-[#828FA3] font-bold hover:text-[#635FC7] transition-colors"
+          className="flex items-center gap-2 text-(--color-text-secondary) font-bold hover:text-[#635FC7] transition-colors"
         >
           <EyeOff className="w-5 h-5" />
           <span>Hide Sidebar</span>

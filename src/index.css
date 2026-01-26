@@ -3,20 +3,33 @@
 
 :root {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  --color-bg-body: #F4F7FD;
-  --color-text-main: #000112;
+  
+  /* Light Mode Defaults */
+  --color-bg-main: #F4F7FD;
+  --color-bg-surface: #FFFFFF;
+  --color-text-primary: #000112;
+  --color-text-secondary: #828FA3;
+  --color-border: #E4EBFA;
+  --color-input-border: rgba(130, 143, 163, 0.25);
 }
 
 .dark {
-  --color-bg-body: #20212C;
-  --color-text-main: #FFFFFF;
+  /* Dark Mode Overrides */
+  --color-bg-main: #20212C;
+  --color-bg-surface: #2B2C37;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #828FA3;
+  --color-border: #3E3F4E;
+  --color-input-border: rgba(130, 143, 163, 0.25);
 }
 
 body {
-  background-color: var(--color-bg-body);
-  color: var(--color-text-main);
+  background-color: var(--color-bg-main);
+  color: var(--color-text-primary);
   transition: background-color 0.2s ease, color 0.2s ease;
 }
+
+
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {

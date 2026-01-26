@@ -4,24 +4,33 @@ import Board from "./components/Board";
 import TaskModal from "./components/modals/TaskModal";
 import AddEditTaskModal from "./components/modals/AddEditTaskModal";
 import BoardModal from "./components/modals/BoardModal";
+import DeleteModal from "./components/modals/DeleteModal";
 import data from "./data.json";
+import type { Board as BoardType, Task } from "./types/types";
 import "./index.css";
-import type { Board as BoardType } from "./types/types";
 
 const App = () => {
-  const [activeBoardIndex, setActiveBoardIndex] = useState(0);
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  
-  // Data State
+  // State
   const [boards, setBoards] = useState<BoardType[]>(data.boards);
+  const [activeBoardIndex, setActiveBoardIndex] = useState(0);
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    const savedTheme = localStorage.getItem("kanvia-theme");
+    return (savedTheme as "light" | "dark") || "dark";
+  });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // Modal State
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [isBoardModalOpen, setIsBoardModalOpen] = useState(false);
+  const [isDeleteBoardModalOpen, setIsDeleteBoardModalOpen] = useState(false);
+  const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
+
   const [boardModalType, setBoardModalType] = useState<"add" | "edit">("add");
-  
+
+  // Selected task tracking
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [selectedTaskIndices, setSelectedTaskIndices] = useState<{
     colIndex: number;
     taskIndex: number;
@@ -29,120 +38,109 @@ const App = () => {
 
   const activeBoard = boards[activeBoardIndex];
 
-  // Helper to get selected task
-  const selectedTask =
-    selectedTaskIndices !== null
-      ? activeBoard.columns[selectedTaskIndices.colIndex].tasks[
-          selectedTaskIndices.taskIndex
-        ]
-      : null;
-
+  // Apply theme to document and persist to localStorage
   useEffect(() => {
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    localStorage.setItem("kanvia-theme", theme);
   }, [theme]);
 
-  // Handlers
+  // Task Handlers
   const handleTaskClick = (colIndex: number, taskIndex: number) => {
+    const task = activeBoard.columns[colIndex].tasks[taskIndex];
+    setSelectedTask(task);
     setSelectedTaskIndices({ colIndex, taskIndex });
     setIsTaskModalOpen(true);
-  };
-
-  const handleSubtaskToggle = (subtaskIndex: number) => {
-    if (!selectedTaskIndices) return;
-    const { colIndex, taskIndex } = selectedTaskIndices;
-    
-    const newBoards = [...boards];
-    const board = newBoards[activeBoardIndex];
-    const column = board.columns[colIndex];
-    const task = column.tasks[taskIndex];
-    const subtask = task.subtasks[subtaskIndex];
-
-    subtask.isCompleted = !subtask.isCompleted;
-    setBoards(newBoards);
-  };
-
-  const handleStatusChange = (newStatus: string) => {
-    if (!selectedTaskIndices) return;
-    const { colIndex, taskIndex } = selectedTaskIndices;
-
-    const newBoards = [...boards];
-    const board = newBoards[activeBoardIndex];
-    const currentColumn = board.columns[colIndex];
-    const task = currentColumn.tasks[taskIndex];
-
-    // Find new column
-    const newColIndex = board.columns.findIndex((col) => col.name === newStatus);
-    if (newColIndex === -1) return;
-
-    // Remove from current
-    currentColumn.tasks.splice(taskIndex, 1);
-    // Update status text
-    task.status = newStatus;
-    // Add to new
-    board.columns[newColIndex].tasks.push(task);
-
-    setBoards(newBoards);
-    setIsTaskModalOpen(false); // Close because indices are invalid now
   };
 
   const handleAddTask = (taskData: any) => {
     const newBoards = [...boards];
     const board = newBoards[activeBoardIndex];
-    // Add to specific column based on status, or first column
     const columnIndex = board.columns.findIndex(
       (col) => col.name === taskData.status
     );
-    const targetColumnIndex = columnIndex !== -1 ? columnIndex : 0;
-    
-    board.columns[targetColumnIndex].tasks.push(taskData);
-    setBoards(newBoards);
-  };
-
-  const handleBoardSubmit = (data: { name: string; columns: { name: string; tasks: [] }[] }) => {
-    const newBoards = [...boards];
-    
-    if (boardModalType === "add") {
-      const newBoard: BoardType = {
-        name: data.name,
-        columns: data.columns.map(col => ({ name: col.name, tasks: [] }))
-      };
-      newBoards.push(newBoard);
-      setBoards(newBoards);
-      setActiveBoardIndex(newBoards.length - 1);
-    } else {
-      const board = newBoards[activeBoardIndex];
-      board.name = data.name;
-      
-      // Smart merge of columns to preserve tasks if names match, or just tasks if index match
-      // For simplicity in this demo, we will try to map existing tasks to new columns if names match
-      
-      const newColumns = data.columns.map(newCol => {
-         const existingCol = board.columns.find(c => c.name === newCol.name);
-         return {
-           name: newCol.name,
-           tasks: existingCol ? existingCol.tasks : []
-         };
-      });
-
-      // NOTE: This simple logic might lose tasks if column names change completely. 
-      // In a real app we'd track column IDs. 
-      // Fallback: if we just added a column, keep old ones.
-      // But the modal returns the FULL list of desired columns. 
-      
-      // Let's improve: The modal returns ALL columns including new ones.
-      // We iterate over the modal's returned columns.
-      
-      board.columns = newColumns;
+    if (columnIndex !== -1) {
+      board.columns[columnIndex].tasks.push(taskData);
       setBoards(newBoards);
     }
-    
-    setIsBoardModalOpen(false);
   };
 
+  const handleStatusChange = (newStatus: string) => {
+    if (!selectedTaskIndices) return;
+    const { colIndex, taskIndex } = selectedTaskIndices;
+    const newBoards = [...boards];
+    const board = newBoards[activeBoardIndex];
+    const column = board.columns[colIndex];
+    const task = column.tasks[taskIndex];
+
+    // Remove from current column
+    column.tasks.splice(taskIndex, 1);
+
+    // Add to new column
+    const newColIndex = board.columns.findIndex((c) => c.name === newStatus);
+    if (newColIndex !== -1) {
+      task.status = newStatus;
+      board.columns[newColIndex].tasks.push(task);
+      setBoards(newBoards);
+
+      // Update selected task indices
+      setSelectedTaskIndices({
+        colIndex: newColIndex,
+        taskIndex: board.columns[newColIndex].tasks.length - 1,
+      });
+      setSelectedTask(task);
+    }
+  };
+
+  const handleSubtaskToggle = (subtaskIndex: number) => {
+    if (!selectedTaskIndices) return;
+    const { colIndex, taskIndex } = selectedTaskIndices;
+    const newBoards = [...boards];
+    const task = newBoards[activeBoardIndex].columns[colIndex].tasks[taskIndex];
+    task.subtasks[subtaskIndex].isCompleted =
+      !task.subtasks[subtaskIndex].isCompleted;
+    setBoards(newBoards);
+    setSelectedTask(task);
+  };
+
+  const handleEditTaskSubmit = (taskData: any) => {
+    if (!selectedTaskIndices) return;
+    const { colIndex, taskIndex } = selectedTaskIndices;
+    const newBoards = [...boards];
+    const board = newBoards[activeBoardIndex];
+    const column = board.columns[colIndex];
+
+    // Check if status changed
+    if (taskData.status !== column.name) {
+      // Move task
+      column.tasks.splice(taskIndex, 1);
+      const newColIndex = board.columns.findIndex(
+        (c) => c.name === taskData.status
+      );
+      if (newColIndex !== -1) {
+        board.columns[newColIndex].tasks.push(taskData);
+      }
+    } else {
+      // Update in place
+      column.tasks[taskIndex] = taskData;
+    }
+    setBoards(newBoards);
+    setIsEditTaskModalOpen(false);
+    setIsTaskModalOpen(false);
+  };
+
+  const handleDeleteTask = () => {
+    if (!selectedTaskIndices) return;
+    const { colIndex, taskIndex } = selectedTaskIndices;
+    const newBoards = [...boards];
+    const board = newBoards[activeBoardIndex];
+    const column = board.columns[colIndex];
+    column.tasks.splice(taskIndex, 1);
+    setBoards(newBoards);
+    setIsDeleteTaskModalOpen(false);
+    setIsTaskModalOpen(false);
+  };
+
+  // Board Handlers
   const openAddBoardModal = () => {
     setBoardModalType("add");
     setIsBoardModalOpen(true);
@@ -151,6 +149,42 @@ const App = () => {
   const openEditBoardModal = () => {
     setBoardModalType("edit");
     setIsBoardModalOpen(true);
+  };
+
+  const handleBoardSubmit = (data: {
+    name: string;
+    columns: { name: string; tasks: [] }[];
+  }) => {
+    if (boardModalType === "add") {
+      setBoards([...boards, data as BoardType]);
+      setActiveBoardIndex(boards.length);
+    } else {
+      const newBoards = [...boards];
+      // Preserve existing tasks when editing
+      const existingBoard = newBoards[activeBoardIndex];
+      const updatedColumns = data.columns.map((newCol) => {
+        const existingCol = existingBoard.columns.find(
+          (col) => col.name === newCol.name
+        );
+        return existingCol || { name: newCol.name, tasks: [] };
+      });
+      newBoards[activeBoardIndex] = {
+        name: data.name,
+        columns: updatedColumns,
+      };
+      setBoards(newBoards);
+    }
+  };
+
+  const handleDeleteBoard = () => {
+    const newBoards = boards.filter((_, i) => i !== activeBoardIndex);
+    if (newBoards.length === 0) {
+      // Create a default empty board if all deleted
+      newBoards.push({ name: "New Board", columns: [] });
+    }
+    setBoards(newBoards);
+    setActiveBoardIndex(0);
+    setIsDeleteBoardModalOpen(false);
   };
 
   return (
@@ -164,39 +198,82 @@ const App = () => {
       setIsSidebarOpen={setIsSidebarOpen}
       onAddNewTask={() => setIsAddModalOpen(true)}
       onAddBoard={openAddBoardModal}
+      onEditBoard={openEditBoardModal}
+      onDeleteBoard={() => setIsDeleteBoardModalOpen(true)}
     >
-      <Board 
-        board={activeBoard} 
+      <Board
+        board={activeBoard}
         onTaskClick={handleTaskClick}
         onAddColumn={openEditBoardModal}
       />
-      
+
       {selectedTask && (
         <TaskModal
           isOpen={isTaskModalOpen}
           onClose={() => setIsTaskModalOpen(false)}
           task={selectedTask}
           columns={activeBoard.columns}
-          currentColumnName={activeBoard.columns[selectedTaskIndices!.colIndex].name}
+          currentColumnName={
+            activeBoard.columns[selectedTaskIndices!.colIndex].name
+          }
           onStatusChange={handleStatusChange}
           onSubtaskToggle={handleSubtaskToggle}
+          onEditTask={() => {
+            setIsTaskModalOpen(false);
+            setIsEditTaskModalOpen(true);
+          }}
+          onDeleteTask={() => {
+            setIsDeleteTaskModalOpen(true);
+          }}
         />
       )}
 
-      <AddEditTaskModal 
+      {/* Add Task Modal */}
+      <AddEditTaskModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         columns={activeBoard.columns}
         onSubmit={handleAddTask}
       />
 
-      <BoardModal 
+      {/* Edit Task Modal */}
+      {selectedTask && (
+        <AddEditTaskModal
+          isOpen={isEditTaskModalOpen}
+          onClose={() => setIsEditTaskModalOpen(false)}
+          columns={activeBoard.columns}
+          onSubmit={handleEditTaskSubmit}
+          task={selectedTask}
+        />
+      )}
+
+      <BoardModal
         isOpen={isBoardModalOpen}
         onClose={() => setIsBoardModalOpen(false)}
         type={boardModalType}
         board={boardModalType === "edit" ? activeBoard : undefined}
         onSubmit={handleBoardSubmit}
       />
+
+      {/* Delete Board Modal */}
+      <DeleteModal
+        isOpen={isDeleteBoardModalOpen}
+        onClose={() => setIsDeleteBoardModalOpen(false)}
+        onDelete={handleDeleteBoard}
+        type="board"
+        title={activeBoard.name}
+      />
+
+      {/* Delete Task Modal */}
+      {selectedTask && (
+        <DeleteModal
+          isOpen={isDeleteTaskModalOpen}
+          onClose={() => setIsDeleteTaskModalOpen(false)}
+          onDelete={handleDeleteTask}
+          type="task"
+          title={selectedTask.title}
+        />
+      )}
     </Layout>
   );
 };

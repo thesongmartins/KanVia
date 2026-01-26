@@ -16,7 +16,7 @@ const Column = ({ column, colIndex, onTaskClick }: ColumnProps) => {
     <div className="flex flex-col gap-6 min-w-[280px] w-[280px]">
       <div className="flex items-center gap-2">
         <div className={`rounded-full w-[15px] h-[15px] ${color}`} />
-        <h2 className="text-[#828FA3] text-xs font-bold tracking-widest uppercase">
+        <h2 className="text-(--color-text-secondary) text-xs font-bold tracking-widest uppercase">
           {column.name} ({column.tasks.length})
         </h2>
       </div>

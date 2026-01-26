@@ -1,4 +1,5 @@
-import { EllipsisVertical } from "lucide-react";
+import { useState } from "react";
+import EllipsisMenu from "../common/EllipsisMenu";
 import type { Task, Column } from "../../types/types";
 import Modal from "./Modal";
 
@@ -10,6 +11,8 @@ interface TaskModalProps {
   currentColumnName: string;
   onStatusChange: (newStatus: string) => void;
   onSubtaskToggle: (subtaskIndex: number) => void;
+  onEditTask: () => void;
+  onDeleteTask: () => void;
 }
 
 const TaskModal = ({
@@ -20,6 +23,8 @@ const TaskModal = ({
   currentColumnName,
   onStatusChange,
   onSubtaskToggle,
+  onEditTask,
+  onDeleteTask,
 }: TaskModalProps) => {
   if (!task) return null;
 
@@ -28,27 +33,29 @@ const TaskModal = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="flex justify-between items-start gap-4 mb-6">
-        <h2 className="text-lg font-bold text-[#000112] dark:text-white leading-normal">
+        <h2 className="text-lg font-bold text-[var(--color-text-primary)] leading-normal">
           {task.title}
         </h2>
-        <button className="text-[#828FA3] hover:text-[#20212C] dark:hover:text-white">
-          <EllipsisVertical className="w-5 h-5" />
-        </button>
+        <EllipsisMenu 
+            type="Task" 
+            setOpenEditModal={onEditTask} 
+            setOpenDeleteModal={onDeleteTask} 
+        />
       </div>
 
-      <p className="text-[#828FA3] text-[13px] leading-6 mb-6">
+      <p className="text-(--color-text-secondary) text-[13px] leading-6 mb-6">
         {task.description || "No description provided."}
       </p>
 
       <div className="mb-6">
-        <h3 className="text-[#828FA3] text-xs font-bold mb-4">
+        <h3 className="text-(--color-text-secondary) text-xs font-bold mb-4">
           Subtasks ({completedSubtasks} of {task.subtasks.length})
         </h3>
         <div className="flex flex-col gap-2">
           {task.subtasks.map((subtask, index) => (
             <div
               key={index}
-              className="flex items-center gap-4 bg-[#F4F7FD] dark:bg-[#20212C] p-3 rounded hover:bg-[#635FC7]/25 transition-colors cursor-pointer"
+              className="flex items-center gap-4 bg-(--color-bg-main) p-3 rounded hover:bg-[#635FC7]/25 transition-colors cursor-pointer"
               onClick={() => onSubtaskToggle(index)}
             >
               <input
@@ -61,7 +68,7 @@ const TaskModal = ({
                 className={`text-xs font-bold flex-1 ${
                   subtask.isCompleted
                     ? "text-[#828FA3] line-through"
-                    : "text-[#000112] dark:text-white"
+                    : "text-(--color-text-primary)"
                 }`}
               >
                 {subtask.title}
@@ -72,18 +79,18 @@ const TaskModal = ({
       </div>
 
       <div>
-        <h3 className="text-[#828FA3] text-xs font-bold mb-2">Current Status</h3>
+        <h3 className="text-(--color-text-secondary) text-xs font-bold mb-2">Current Status</h3>
         <div className="relative">
           <select
             value={currentColumnName}
             onChange={(e) => onStatusChange(e.target.value)}
-            className="w-full border border-[#828FA3]/25 rounded px-4 py-2 text-sm text-[#000112] dark:text-white bg-transparent outline-none focus:border-[#635FC7] cursor-pointer"
+            className="w-full border border-(--color-border) rounded px-4 py-2 text-sm text-(--color-text-primary) bg-transparent outline-none focus:border-[#635FC7] cursor-pointer transition-colors"
           >
             {columns.map((col) => (
               <option
                 key={col.name}
                 value={col.name}
-                className="bg-white dark:bg-[#2B2C37] text-[#000112] dark:text-white"
+                className="bg-(--color-bg-surface) text-(--color-text-primary)"
               >
                 {col.name}
               </option>

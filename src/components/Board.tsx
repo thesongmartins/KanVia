@@ -17,9 +17,9 @@ const Board = ({ board, onTaskClick, onAddColumn }: BoardProps) => {
       {/* New Column Button */}
       <div 
         onClick={onAddColumn}
-        className="min-w-[280px] mt-[39px] rounded-lg bg-gradient-to-b from-[#E9EFFA] to-[#E9EFFA]/50 dark:from-[#2B2C37]/25 dark:to-[#2B2C37]/10 flex items-center justify-center cursor-pointer hover:text-[#635FC7] transition-colors mb-10 group border-2 border-dashed border-[#828FA3]/20 hover:border-[#635FC7]"
+        className="min-w-[280px] mt-[39px] rounded-lg bg-linear-to-b from-[#E9EFFA] to-[#E9EFFA]/50 dark:from-[#2B2C37]/25 dark:to-[#2B2C37]/10 flex items-center justify-center cursor-pointer hover:text-[#635FC7] transition-colors mb-10 group border-2 border-dashed border-[#828FA3]/20 hover:border-[#635FC7]"
       >
-          <div className="flex items-center gap-2 font-bold text-[#828FA3] group-hover:text-[#635FC7] text-xl">
+          <div className="flex items-center gap-2 font-bold text-(--color-text-secondary) group-hover:text-[#635FC7] text-xl">
             <Plus />
             <span>New Column</span>
           </div>

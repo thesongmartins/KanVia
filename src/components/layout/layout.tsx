@@ -14,6 +14,8 @@ interface LayoutProps {
   setIsSidebarOpen: (isOpen: boolean) => void;
   onAddNewTask: () => void;
   onAddBoard: () => void;
+  onEditBoard: () => void;
+  onDeleteBoard: () => void;
 }
 
 const Layout = ({
@@ -27,9 +29,11 @@ const Layout = ({
   setIsSidebarOpen,
   onAddNewTask,
   onAddBoard,
+  onEditBoard,
+  onDeleteBoard,
 }: LayoutProps) => {
   return (
-    <div className="flex h-screen bg-[#F4F7FD] dark:bg-[#20212C] overflow-hidden transition-colors duration-200">
+    <div className="flex h-screen bg-[var(--color-bg-main)] overflow-hidden transition-colors duration-200">
       {/* Sidebar */}
       {isSidebarOpen && (
         <SideBar
@@ -55,10 +59,15 @@ const Layout = ({
 
       {/* Main content area */}
       <div className="flex flex-col flex-1 min-w-0 transition-all duration-300">
-        <Header activeBoard={boards[activeBoardIndex]} onAddNewTask={onAddNewTask} />
+        <Header 
+            activeBoard={boards[activeBoardIndex]} 
+            onAddNewTask={onAddNewTask} 
+            onEditBoard={onEditBoard} 
+            onDeleteBoard={onDeleteBoard} 
+        />
 
         {/* Page content (boards & cards live here) */}
-        <main className="flex-1 overflow-auto mt-4 ml-4 bg-[#F4F7FD] dark:bg-[#20212c]">
+        <main className="flex-1 overflow-auto mt-4 ml-4 bg-[var(--color-bg-main)] transition-colors duration-200">
           {children}
         </main>
       </div>
