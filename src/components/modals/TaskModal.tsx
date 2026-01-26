@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 import EllipsisMenu from "../common/EllipsisMenu";
 import type { Task, Column } from "../../types/types";
 import Modal from "./Modal";
@@ -33,7 +33,7 @@ const TaskModal = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="flex justify-between items-start gap-4 mb-6">
-        <h2 className="text-lg font-bold text-[var(--color-text-primary)] leading-normal">
+        <h2 className="text-lg font-bold text-(--color-text-primary) leading-normal">
           {task.title}
         </h2>
         <EllipsisMenu 
